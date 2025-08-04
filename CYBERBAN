@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CYBERSPACE WA BAN</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: red;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .box {
+      background: #111;
+      padding: 30px;
+      border: 2px solid red;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 25px red;
+      width: 330px;
+    }
+    input, button, select {
+      font-family: 'Courier New', monospace;
+      margin-bottom: 15px;
+    }
+    input, select {
+      background: black;
+      border: 2px solid red;
+      color: red;
+      padding: 12px;
+      width: 100%;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+    button {
+      background: red;
+      color: black;
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    h1, h2 {
+      font-size: 24px;
+      color: red;
+      animation: blink 1s infinite;
+      text-shadow: 0 0 10px red;
+    }
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.2; }
+      100% { opacity: 1; }
+    }
+    .screen { display: none; }
+    .log-box {
+      text-align: left;
+      font-size: 14px;
+      white-space: pre-line;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 20px;
+      text-shadow: 0 0 8px red;
+    }
+    .progress-container {
+      margin-top: 20px;
+      height: 18px;
+      width: 100%;
+      background: #330000;
+      border: 1px solid red;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 0 10px red;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: red;
+      transition: width 0.4s;
+    }
+    #finalScreen h2 { animation: none; }
+    .user-item {
+      display: flex;
+      justify-content: space-between;
+      color: white;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    #contactBtn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      color: red;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    #contactBtn img {
+      width: 20px;
+      height: 20px;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Contact Button -->
+<button id="contactBtn" onclick="window.open('https://wa.me/message/32HDMJDMVWEVI1', '_blank')">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+  CONTACT ME
+</button>
+
+<!-- Screens -->
+<div class="box screen" id="bootScreen" style="display: block;">
+  <h2 id="bootText">WELCOME TO CYBERSPACE WA BAN</h2>
+</div>
+
+<div class="box screen" id="loginScreen">
+  <h1>CYBER LOGIN</h1>
+  <input type="text" id="loginUser" placeholder="Username">
+  <div style="position: relative;">
+    <input type="password" id="loginPass" placeholder="Password">
+    <span onclick="togglePass()" style="position:absolute; right:10px; top:12px; cursor:pointer;">👁</span>
+  </div>
+  <button onclick="login()">Access Panel</button>
+  <button onclick="forgotPassword()" style="background:transparent; color:red; text-decoration:underline; font-size:14px;">Forgot Password?</button>
+</div>
+
+<div class="box screen" id="targetScreen">
+  <h2 id="welcomeText"></h2>
+  <input type="text" id="targetNumber" placeholder="+234...">
+  <button onclick="startSimulation()">BAN NUMBER</button><br><br>
+  <button onclick="logout()">Logout</button><br><br>
+  <button id="manageBtn" onclick="show(screens.userManagement)" style="display: none;">Manage Users</button>
+</div>
+
+<div class="box screen" id="userManagementScreen">
+  <h2>USER MANAGEMENT</h2>
+  <div id="userList"></div>
+  <input type="text" id="newUser" placeholder="New Username">
+  <input type="password" id="newPass" placeholder="New Password">
+  <select id="newRole">
+    <option value="user">User</option>
+    <option value="admin">Admin</option>
+  </select>
+  <button onclick="addUser()">Add User</button><br><br>
+  <button onclick="show(screens.target)">Back</button>
+</div>
+
+<div class="box screen" id="simulationScreen">
+  <h2>⚠ CYBERSPACE UPLINK ⚠</h2>
+  <div id="logBox" class="log-box">Initializing...</div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+</div>
+
+<div class="box screen" id="finalScreen">
+  <h2>✅ BAN COMPLETE</h2>
+  <p id="banMessage">Number +00000000000 has been banned.</p>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<audio id="scarySound" src="https://www.soundjay.com/human/sounds/scream-01.mp3" preload="auto"></audio>
+
+<script>
+  const screens = {
+    boot: document.getElementById("bootScreen"),
+    login: document.getElementById("loginScreen"),
+    target: document.getElementById("targetScreen"),
+    simulation: document.getElementById("simulationScreen"),
+    final: document.getElementById("finalScreen"),
+    userManagement: document.getElementById("userManagementScreen")
+  };
+
+  const progressBar = document.getElementById("progressBar");
+  const logBox = document.getElementById("logBox");
+  const banMessage = document.getElementById("banMessage");
+  const sound = document.getElementById("scarySound");
+  const welcomeText = document.getElementById("welcomeText");
+  const manageBtn = document.getElementById("manageBtn");
+
+  let loggedInUser = null;
+  let lastBanTime = 0;
+  let users = {};
+
+  function saveUsers() {
+    localStorage.setItem("cyberUsers", JSON.stringify(users));
+  }
+
+  function loadUsers() {
+    const saved = localStorage.getItem("cyberUsers");
+    if (saved) {
+      users = JSON.parse(saved);
+    } else {
+      users["CYBERSPACE"] = { password: "cyberspace12334", role: "admin", suspendedUntil: 0 };
+      const demoUsers = [
+        ["shadowX", "ghost@456"], ["byteNinja", "code$breaker1"], ["darkwolf", "midnight!run"],
+        ["venomCore", "v!perStrike99"], ["quantumRex", "Qtm2025@hack"], ["matrixGhost", "NeoIsBack_77"],
+        ["silentBlade", "shhh...blade!"], ["cyberNova", "NovaRed42"], ["redSpecter", "Bloody$Moon"],
+        ["glitchKing", "g1itch#zone"], ["xHunter", "Xx_Sniper44"], ["darkBit", "bit!storm"],
+        ["zeroSignal", "no_signal88"], ["cypherSoul", "s0ul$Breaker"], ["vortexSpy", "v0rtex999"],
+        ["blackIce", "iceCold#24"], ["crimsonByte", "cb1234##"], ["stealthFox", "sly@fox007"],
+        ["zombieCode", "bra1ns!code"], ["ghostNet", "gNet#22"], ["n3onNova", "n3onL!ght"],
+        ["shadowPulse", "sh@dow77"], ["matrixSnare", "mtrx@trap"], ["voltSurfer", "el3ctro!"],
+        ["techTroll", "tr0ll!zone"], ["alphaNode", "alpha!one"], ["rogueBot", "rb@2025"],
+        ["voidMaster", "enterVoid%"], ["bugHunter", "debugMe123"], ["circuitFreak", "freaky!loop"]
+      ];
+      demoUsers.forEach(([u, p]) => {
+        users[u] = { password: p, role: "user", suspendedUntil: 0 };
+      });
+      saveUsers();
+    }
+  }
+
+  loadUsers();
+
+  function show(screen) {
+    Object.values(screens).forEach(s => s.style.display = "none");
+    screen.style.display = "block";
+  }
+
+  setTimeout(() => show(screens.login), 3000);
+
+  function login() {
+    const user = document.getElementById("loginUser").value.trim();
+    const pass = document.getElementById("loginPass").value.trim();
+    const account = users[user];
+    if (!account || account.password !== pass) return alert("Invalid credentials");
+    if (account.suspendedUntil && Date.now() < account.suspendedUntil)
+      return alert("⛔ Suspended until " + new Date(account.suspendedUntil).toLocaleString());
+
+    loggedInUser = user;
+    welcomeText.textContent = `WELCOME BACK ${user.toUpperCase()}`;
+    show(screens.target);
+    manageBtn.style.display = (account.role === "admin") ? "inline-block" : "none";
+    updateUserList();
+  }
+
+  function logout() {
+    loggedInUser = null;
+    document.getElementById("loginUser").value = "";
+    document.getElementById("loginPass").value = "";
+    show(screens.login);
+    logBox.textContent = "Initializing...";
+    progressBar.style.width = "0%";
+  }
+
+  function startSimulation() {
+    const number = document.getElementById("targetNumber").value.trim();
+    if (users[loggedInUser].role === "user") {
+      if (Date.now() - lastBanTime < 5 * 60 * 1000) {
+        const wait = Math.ceil((5 * 60 * 1000 - (Date.now() - lastBanTime)) / 1000);
+        return alert(`⏳ Wait ${wait}s before another ban.`);
+      }
+      lastBanTime = Date.now();
+    }
+    if (!number.match(/^\+?[0-9]+$/)) return alert("⚠ Invalid number format");
+    const raw = number.replace(/\D/g, "");
+    if (raw.length < 10 || raw.length > 15) return alert("⚠ Invalid phone number");
+    if (["000", "12345", "111", "999"].some(p => raw.includes(p))) return alert("⚠ Fake number detected");
+
+    show(screens.simulation);
+    sound.play();
+
+    const logs = [
+      `> Connecting to WhatsApp firewall...`, `> Breach successful.`,
+      `> Target: ${number}`, `> Accessing device info...`,
+      `> SIM card located...`, `> Injecting packet bomb...`,
+      `> MAC Spoofing... OK`, `> Sending shadow request...`,
+      `> Spoof ID matched...`, `> System verification bypassed.`,
+      `> Writing ban protocol...`, `> ✓✓ Last seen removed`,
+      `> ✓✓ Messages blocked`, `> ✓✓ Device flagged`,
+      `> Finalizing remote shutdown...`, `> TRACE BLOCKED`,
+      `> SYSTEM LOCKED`, `> BAN COMPLETE`
+    ];
+
+    let i = 0, progress = 0;
+    logBox.textContent = "";
+    const interval = setInterval(() => {
+      if (i < logs.length) {
+        logBox.textContent += logs[i++] + "\n";
+        progress += Math.floor(100 / logs.length);
+        progressBar.style.width = progress + "%";
+      } else {
+        clearInterval(interval);
+        progressBar.style.width = "100%";
+        banMessage.textContent = `Number ${number} has been BANNED successfully.`;
+        setTimeout(() => show(screens.final), 2000);
+      }
+    }, 800);
+  }
+
+  function addUser() {
+    const user = document.getElementById("newUser").value.trim();
+    const pass = document.getElementById("newPass").value.trim();
+    const role = document.getElementById("newRole").value;
+    if (!user || !pass) return alert("All fields required");
+    if (users[user]) return alert("User already exists");
+    if (role === "admin" && loggedInUser !== "CYBERSPACE") return alert("Only CYBERSPACE can create admins");
+    users[user] = { password: pass, role: role, suspendedUntil: 0 };
+    saveUsers();
+    updateUserList();
+    alert(`${user} added as ${role}`);
+  }
+
+  function removeUser(user) {
+    if (user === "CYBERSPACE") return alert("Can't remove main admin");
+    delete users[user];
+    saveUsers();
+    updateUserList();
+  }
+
+  function suspendUserPrompt(user) {
+    const min = prompt(`Suspend ${user} for how many minutes?`);
+    const ms = parseInt(min) * 60000;
+    if (isNaN(ms) || ms <= 0) return alert("Invalid time");
+    users[user].suspendedUntil = Date.now() + ms;
+    saveUsers();
+    alert(`${user} suspended until ${new Date(users[user].suspendedUntil).toLocaleString()}`);
+  }
+
+  function changePasswordPrompt(user) {
+    const newPass = prompt(`Enter new password for ${user}:`);
+    if (!newPass) return alert("Password not changed");
+    users[user].password = newPass;
+    saveUsers();
+    alert(`${user}'s password updated`);
+  }
+
+  function updateUserList() {
+    const list = document.getElementById("userList");
+    list.innerHTML = "";
+    for (let u in users) {
+      const isMain = u === "CYBERSPACE";
+      const btns = isMain ? "" : `
+        <button onclick="removeUser('${u}')">Remove</button>
+        <button onclick="suspendUserPrompt('${u}')">Suspend</button>
+        <button onclick="changePasswordPrompt('${u}')">Change Password</button>`;
+      list.innerHTML += `<div class="user-item"><span>${u} (${users[u].role})</span>${btns}</div>`;
+    }
+  }
+
+  function forgotPassword() {
+    const user = document.getElementById("loginUser").value.trim();
+    const mailto = `mailto:cyberspaceofficials01@gmail.com?subject=Password Reset&body=Username: ${encodeURIComponent(user)}%0D%0AI forgot my password.`;
+    window.open(mailto, '_blank');
+  }
+
+  function togglePass() {
+    const input = document.getElementById("loginPass");
+    input.type = input.type === "password" ? "text" : "password";
+  }
+</script>
+
+</body>
+</html>
